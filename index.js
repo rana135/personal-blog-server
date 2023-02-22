@@ -18,6 +18,7 @@ const client = new MongoClient(uri, {
 
 const run = async () => {
   try {
+    client.connect();
     const db = client.db("personal-blog");
     const blogCollection = db.collection("blogs");
 
