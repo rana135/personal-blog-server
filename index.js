@@ -16,7 +16,7 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-const run = async () => {
+async function run() {
   try {
     client.connect();
     const db = client.db("personal-blog");
@@ -50,6 +50,20 @@ const run = async () => {
       const result = await blogCollection.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     });
+
+    app.put('/blog/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const blogs = req.body;
+      console.log(blogs._id);
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updateDoc = {
+          $set: blogs,
+      }
+      const result = await blogCollection.updateOne(filter, updateDoc, options)
+      res.send(result)
+  })
 
   } finally {
   }
