@@ -19,28 +19,28 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     client.connect();
-    const db = client.db("personal-blog");
-    const blogCollection = db.collection("blogs");
+    const db = client.db("blog");
+    const blogCollection = db.collection("myBlog");
 
     app.get("/blogs", async (req, res) => {
       const cursor = blogCollection.find({});
-      const blog = await cursor.toArray();
+      const product = await cursor.toArray();
 
-      res.send({ status: true, data: blog });
-    });
-
-    app.post("/blog", async (req, res) => {
-      const blog = req.body;
-
-      const result = await blogCollection.insertOne(blog);
-
-      res.send(result);
+      res.send({ status: true, data: product });
     });
 
     app.get("/blogs/:id", async (req, res) => {
       const id = req.params.id;
+      const query = { _id: ObjectId(id) }
+      const data = await blogCollection.findOne(query);
 
-      const result = await blogCollection.findOne({ _id: ObjectId(id) });
+      res.send(data);
+    });
+
+    app.post("/blog", async (req, res) => {
+      const product = req.body;
+      const result = await blogCollection.insertOne(product);
+
       res.send(result);
     });
 
@@ -51,19 +51,18 @@ async function run() {
       res.send(result);
     });
 
+
     app.put('/blog/:id', async (req, res) => {
-      const id = req.params.id;
-      console.log(id);
-      const blogs = req.body;
-      console.log(blogs._id);
-      const filter = { _id: new ObjectId(id) }
-      const options = { upsert: true };
+      const {id} = req.params;
+      const blog = req.body
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
       const updateDoc = {
-          $set: blogs,
+        $set: blog,
       }
-      const result = await blogCollection.updateOne(filter, updateDoc, options)
-      res.send(result)
-  })
+      const data = await blogCollection.updateOne(filter, updateDoc, option)
+      res.send(data)
+    })
 
   } finally {
   }
