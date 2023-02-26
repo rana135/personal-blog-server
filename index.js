@@ -21,6 +21,7 @@ async function run() {
     client.connect();
     const db = client.db("blog");
     const blogCollection = db.collection("myBlog");
+    const historyCollection = db.collection("history");
 
     app.get("/blogs", async (req, res) => {
       const cursor = blogCollection.find({});
@@ -38,8 +39,8 @@ async function run() {
     });
 
     app.post("/blog", async (req, res) => {
-      const product = req.body;
-      const result = await blogCollection.insertOne(product);
+      const blog = req.body;
+      const result = await blogCollection.insertOne(blog);
 
       res.send(result);
     });
@@ -50,7 +51,6 @@ async function run() {
       const result = await blogCollection.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     });
-
 
     app.put('/blog/:id', async (req, res) => {
       const {id} = req.params;
